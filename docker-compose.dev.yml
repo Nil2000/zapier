@@ -1,0 +1,16 @@
+version: "1.0"
+services:
+  zapier_db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: johndoe
+      POSTGRES_PASSWORD: randompassword
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    volumes:
+      - zapier_data:/data
+
+volumes:
+  zapier_data:
