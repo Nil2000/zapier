@@ -3,21 +3,23 @@ import express from "express";
 
 //hooks.zapier.com/hooks/catch/:userId/:zapId
 
-const app = express();
 const client = new PrismaClient();
+const app = express();
+app.use(express.json());
 app.post("/hooks/catch/:userId/:zapId", async (req, res) => {
   const { userId, zapId } = req.params;
   const body = req.body;
 
+  //retain atomicity (0,1)
   await client.$transaction(async (tx) => {
-    const run = await client.zapRun.create({
+    const run = await tx.zapRun.create({
       data: {
         zapId: zapId,
         metaData: body,
       },
     });
 
-    await client.zapRunOutbox.create({
+    await tx.zapRunOutbox.create({
       data: {
         zapRunId: run.id,
       },
